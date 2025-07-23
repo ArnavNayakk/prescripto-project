@@ -10,6 +10,7 @@ function Navbar() {
 
   const [showMenu, setShowMenu] = useState(false);
   const [animateMenu, setAnimateMenu] = useState(false);
+  const [showMobileDropdown, setShowMobileDropdown] = useState(false);
 
   const logout = () => {
     setToken(false);
@@ -19,12 +20,12 @@ function Navbar() {
 
   const openMenu = () => {
     setShowMenu(true);
-    setTimeout(() => setAnimateMenu(true), 10); 
+    setTimeout(() => setAnimateMenu(true), 10);
   };
 
   const closeMenu = () => {
-    setAnimateMenu(false); // starts animation
-    setTimeout(() => setShowMenu(false), 300); 
+    setAnimateMenu(false);
+    setTimeout(() => setShowMenu(false), 300);
   };
 
   return (
@@ -53,7 +54,7 @@ function Navbar() {
 
       <div className="flex items-center gap-4 relative">
         {token && userData ? (
-          <div className="relative group cursor-pointer">
+          <div className="relative group cursor-pointer hidden md:block">
             <div className="flex items-center gap-2">
               <img className="w-9 h-9 object-cover rounded-full" src={userData.image || assets.default_profile} alt="Profile" />
               <img className="w-3 transition-transform duration-300 group-hover:rotate-180" src={assets.dropdown_icon} alt="Dropdown" />
@@ -73,28 +74,47 @@ function Navbar() {
           </button>
         )}
 
-        {/* Hamburger icon */}
+        
         <img onClick={openMenu} className="w-6 md:hidden" src={assets.menu_icon} alt="Menu" />
 
-        {/* Mobile Menu & Backdrop */}
+        {token && userData && (
+          <div className="relative md:hidden">
+            <img
+              className="w-9 h-9 object-cover rounded-full cursor-pointer"
+              onClick={() => setShowMobileDropdown(!showMobileDropdown)}
+              src={userData.image || assets.default_profile}
+              alt="Profile"
+            />
+            {showMobileDropdown && (
+              <div className="absolute top-full right-0 mt-2 pt-4 text-base font-medium text-gray-600 z-50 bg-stone-100 rounded flex-col gap-4 p-4 min-w-48 shadow-lg">
+                <p onClick={() => { navigate('/my-profile'); setShowMobileDropdown(false); }} className="hover:text-black cursor-pointer">My Profile</p>
+                <p onClick={() => { navigate('/my-appointment'); setShowMobileDropdown(false); }} className="hover:text-black cursor-pointer">My Appointment</p>
+                <p onClick={() => { logout(); setShowMobileDropdown(false); }} className="hover:text-black cursor-pointer">Logout</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!token && (
+          <button
+            onClick={() => navigate('/login')}
+            className="bg-[#5f6fff] text-white px-4 py-2 rounded-full font-light block md:hidden"
+          >
+            Create account
+          </button>
+        )}
+
+       
         {showMenu && (
           <>
-            
             <div
               onClick={closeMenu}
-              className={`
-                fixed inset-0 z-30 bg-black transition-opacity duration-300
-                ${animateMenu ? 'opacity-40' : 'opacity-0'}
-              `}
+              className={`fixed inset-0 z-30 bg-black transition-opacity duration-300 ${animateMenu ? 'opacity-40' : 'opacity-0'}`}
             />
 
-            {/* Slide-in Menu */}
+            
             <div
-              className={`
-                fixed top-0 right-0 w-4/5 h-full bg-white z-40
-                transition-transform duration-300 ease-in-out
-                ${animateMenu ? 'translate-x-0' : 'translate-x-full'}
-              `}
+              className={`fixed top-0 right-0 w-4/5 h-full bg-white z-40 transition-transform duration-300 ease-in-out ${animateMenu ? 'translate-x-0' : 'translate-x-full'}`}
             >
               <div className="flex items-center justify-between px-5 py-6">
                 <img className="w-36" src={assets.logo} alt="Logo" />
