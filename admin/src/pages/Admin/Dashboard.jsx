@@ -55,7 +55,7 @@ function dashboard() {
             {
               dashData.latestAppointments.map((item,index)=>(
                 <div className='flex items-center px-6 py-3 gap-3 hover:bg-gray-100' key={index}>
-                 <img className="w-10 h-10 rounded-full object-cover" src={item.docId.image} alt=''/>
+                 <img className="w-10 h-10 rounded-full object-contain" src={item.docId.image} alt=''/>
                  <div className='flex-1 text-sm'>
                   <p className='text-gray-800 font-medium'>{item.docId.name}</p>
                   <p className='text-gray-600'>{slotDataFormat(item.slotDate)}, {item.slotTime}</p>

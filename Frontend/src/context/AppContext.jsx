@@ -30,21 +30,35 @@ const getDoctorsData = async() =>{
 
 const loadUserProfileData = async () => {
   try {
+    if (!token) return; 
+
     const response = await axios.get(backendUrl + '/api/user/get-profile', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('Loaded user data:', response.data.userData)
+
+
     if (response?.data?.success) {
       setUserData(response.data.userData);
       return response.data.userData; 
     } else {
       toast.error(response?.data?.message || 'Failed to load user profile');
     }
+
   } catch (error) {
     console.error('Profile Load Error:', error.message);
-    toast.error(error?.response?.data?.message || 'Unauthorized or server error');
+
+    if (error?.response?.status === 401) {
+      localStorage.removeItem('token');
+      setToken(null);
+      setUserData(false);
+
+      toast.error('Session expired. Please login again.');
+      navigate('/login'); 
+    } else {
+      toast.error(error?.response?.data?.message || 'Unauthorized or server error');
+    }
   }
 };
 

@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { AppContext } from '../context/AppContext'
-import { useNavigate } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 function RelatedDoctor({ speciality, docId }) {
-  const { doctors } = useContext(AppContext)
-  const [relDoc, setRelDocs] = useState([])
+  const { doctors } = useContext(AppContext);
+  const [relDoc, setRelDocs] = useState([]);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (doctors.length > 0 && speciality) {
       const doctorsData = doctors.filter(
         (doc) => doc.speciality === speciality && doc._id !== docId
-      )
-      setRelDocs(doctorsData)
+      );
+      setRelDocs(doctorsData);
     }
-  }, [doctors, speciality, docId])
+  }, [doctors, speciality, docId]);
 
   return (
     <div className="flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10">
@@ -27,10 +27,18 @@ function RelatedDoctor({ speciality, docId }) {
         {relDoc.slice(0, 5).map((item, index) => (
           <div
             key={index}
-            onClick={() => {navigate(`/appointment/${item._id}`); scrollTo(0,0)}}
+            onClick={() => {
+              navigate(`/appointment/${item._id}`);
+              scrollTo(0, 0);
+            }}
             className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500"
           >
-            <img className="bg-blue-50 w-full h-48 object-cover" src={item.image} alt={item.name} />
+            <img
+              className={`w-full max-w-xl aspect-[4/3] object-contain rounded-md mx-auto bg-blue-50`}
+              src={item.image}
+              alt={item.name}
+              onError={(e) => (e.target.src = '/default-avatar.png')}
+            />
             <div className="p-4 flex items-center gap-2 text-sm text-green-500">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <p>Available</p>
@@ -44,15 +52,15 @@ function RelatedDoctor({ speciality, docId }) {
       </div>
       <button
         onClick={() => {
-          navigate('/doctors')
-          scrollTo(0, 0)
+          navigate('/doctors');
+          scrollTo(0, 0);
         }}
         className="bg-blue-50 hover:bg-blue-100 cursor-pointer text-gray-600 px-12 py-3 rounded-full mt-10"
       >
         More
       </button>
     </div>
-  )
+  );
 }
 
-export default RelatedDoctor
+export default RelatedDoctor;

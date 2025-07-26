@@ -16,11 +16,13 @@ function Navbar() {
     setToken(false);
     localStorage.removeItem('token');
     toast.success('Logged out successfully');
+    navigate('/')
   };
 
   const openMenu = () => {
     setShowMenu(true);
     setTimeout(() => setAnimateMenu(true), 10);
+    
   };
 
   const closeMenu = () => {

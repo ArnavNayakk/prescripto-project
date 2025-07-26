@@ -24,16 +24,21 @@ function Navbar() {
   }
 
   return (
-    <div className='flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white'>
-      <div className='flex items-center gap-2 text-xs'>
-        <img src={assets.admin_logo} alt="Admin Logo" className='w-36 sm:w-40 cursor-pointer' />
-        <p className='border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600'>
+    <div className="flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white">
+      <div className="flex items-center gap-2 text-xs">
+        <img
+          src={assets.admin_logo}
+          alt="Admin Logo"
+          className="w-32 sm:w-40 cursor-pointer"
+        />
+        <p className="border rounded-full text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 border-gray-500 text-gray-600 whitespace-nowrap">
           {aToken ? 'Admin' : dToken ? 'Doctor' : 'User'}
         </p>
       </div>
+
       <button
         onClick={logout}
-        className="bg-[#5f6fff] text-white text-sm px-10 py-2 rounded-full hover:bg-[#4e5ae5] transition-colors"
+        className="bg-[#5f6fff] text-white text-[11px] sm:text-sm px-4 sm:px-10 py-1.5 sm:py-2 rounded-full hover:bg-[#4e5ae5] transition-colors"
       >
         Logout
       </button>
@@ -42,3 +47,6 @@ function Navbar() {
 }
 
 export default Navbar
+
+
+

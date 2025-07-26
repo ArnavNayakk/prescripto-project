@@ -1,11 +1,30 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { toast } from 'react-toastify';
+import Loader from './Loader'; 
 
 function TopDoctor() {
   const navigate = useNavigate();
-  const { doctors } = useContext(AppContext);
+  const { doctors, getDoctorsData } = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+        await getDoctorsData();
+      } catch (error) {
+        toast.error('Failed to fetch doctors');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+  if (loading) return <Loader />;
 
   return (
     <div className="flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10">
@@ -14,7 +33,7 @@ function TopDoctor() {
         Simply browse through our extensive list of trusted doctors.
       </p>
 
-      <div className="w-full grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-5 pt-5 gap-y-6 px-3 sm:px-0">
+      <div className="w-full grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-4 gap-y-6">
         {doctors?.slice(0, 10).map((item, index) => (
           <div
             key={index}
@@ -33,18 +52,23 @@ function TopDoctor() {
             }`}
           >
             <img
-              className={`w-full h-auto sm:h-48 object-contain sm:object-cover ${
+              className={`w-full max-w-xl aspect-[4/3] object-contain rounded-md mx-auto ${
                 item.available ? 'bg-blue-50' : 'bg-gray-200 opacity-70'
               }`}
               src={item.image}
               alt={item.name}
+              onError={(e) => (e.target.src = '/default-avatar.png')}
             />
-            <div className={`p-4 flex items-center gap-2 text-sm ${
-              item.available ? 'text-green-500' : 'text-gray-500'
-            }`}>
-              <div className={`w-2 h-2 rounded-full ${
-                item.available ? 'bg-green-500' : 'bg-gray-500'
-              }`}></div>
+            <div
+              className={`p-4 flex items-center gap-2 text-sm ${
+                item.available ? 'text-green-500' : 'text-gray-500'
+              }`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  item.available ? 'bg-green-500' : 'bg-gray-500'
+                }`}
+              ></div>
               <p>{item.available ? 'Available' : 'Not available'}</p>
             </div>
             <div className="px-4 pb-4">

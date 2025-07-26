@@ -50,7 +50,7 @@ function AllAppointment() {
 
             <div className="flex items-center gap-2">
               <img
-                className="w-8 h-8 rounded-full object-cover"
+                className="w-8 h-8 rounded-full object-contain"
                 src={item.docId?.image || assets.default_doctor_icon}
                 alt={item.docId?.name || 'Doctor'}
               />

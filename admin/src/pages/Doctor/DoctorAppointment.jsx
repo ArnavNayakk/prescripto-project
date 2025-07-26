@@ -51,7 +51,7 @@ function DoctorAppointment() {
             <p>
               {slotDataFormat(item.slotDate)}, {item.slotTime}
             </p>
-            <p>${item.amount}</p>
+            <p> ₹{item.amount}</p>
 
             <div className="flex items-center justify-center">
               {item.cancelled ? (

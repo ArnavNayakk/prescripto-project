@@ -92,7 +92,7 @@ function DoctorProfile() {
                 value={profileData.fees}
               />
             ) : (
-              <span className="text-gray-800 ml-2">${profileData.fees}</span>
+              <span className="text-gray-800 ml-2"> ₹{profileData.fees}</span>
             )}
           </p>
 

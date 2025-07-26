@@ -3,35 +3,36 @@ import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader'; // ✅ Import your Loader component
 
 function MyAppointment() {
   const { backendUrl, token, slotDataFormat, getDoctorsData } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ Loading state
   const navigate = useNavigate();
 
-const getUserAppointment = async () => {
-  try {
-    const { data } = await axios.get(`${backendUrl}/api/user/appointments`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const getUserAppointment = async () => {
+    setLoading(true); // ✅ Start loading
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/appointments`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (data.success) {
-      const sortedAppointments = data.appointments.sort(
-        (a, b) => new Date(b.slotDate) - new Date(a.slotDate)
-      );
-      setAppointments(sortedAppointments);
-      console.log("✅ Sorted Appointments fetched:", sortedAppointments);
-    } else {
-      toast.error(data.message || 'Failed to fetch appointments');
+      if (data.success) {
+        const sortedAppointments = data.appointments.sort(
+          (a, b) => new Date(b.slotDate) - new Date(a.slotDate)
+        );
+        setAppointments(sortedAppointments);
+      } else {
+        toast.error(data.message || 'Failed to fetch appointments');
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
-  } catch (error) {
-    console.error("❌ API Error:", error);
-    toast.error(error.message);
-  }
-};
-
+    setLoading(false); // ✅ Stop loading
+  };
 
   const cancelAppointment = async (appointmentId) => {
     try {
@@ -64,8 +65,6 @@ const getUserAppointment = async () => {
       order_id: order.id,
 
       handler: async (response) => {
-        console.log(response);
-
         try {
           const { data } = await axios.post(
             backendUrl + '/api/user/verifyRazorpay',
@@ -80,7 +79,6 @@ const getUserAppointment = async () => {
             navigate('/my-appointment');
           }
         } catch (error) {
-          console.log(error);
           toast.error(error.message);
         }
       }
@@ -110,7 +108,6 @@ const getUserAppointment = async () => {
 
   useEffect(() => {
     if (token) {
-      console.log("🔑 Token ready, fetching appointments...");
       getUserAppointment();
     }
   }, [token]);
@@ -118,17 +115,16 @@ const getUserAppointment = async () => {
   return (
     <div className="px-6 py-12 max-w-5xl mx-auto min-h-screen">
       <h1 className="text-center mb-5">My Appointments</h1>
-      <hr className='mb-10' />
+      <hr className="mb-10" />
 
-      {appointments.length === 0 ? (
+      {loading ? (
+        <Loader /> // ✅ Show loader while loading
+      ) : appointments.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">No appointments found.</p>
       ) : (
         <div className="space-y-8">
           {appointments.map((item, index) => {
-            if (!item.docData) {
-              console.warn("⚠️ Missing docData in appointment:", item);
-              return null;
-            }
+            if (!item.docData) return null;
 
             const doctorImage = item.docData.image?.startsWith("http")
               ? item.docData.image
@@ -140,7 +136,7 @@ const getUserAppointment = async () => {
                 className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row md:items-center md:gap-6 p-8 border border-gray-200 hover:shadow-xl transition-shadow"
               >
                 <img
-                  className="w-full max-w-xs sm:max-w-sm md:max-w-36 aspect-square object-cover rounded-md bg-indigo-100 mx-auto md:mx-0"
+                  className="w-36 h-36 object-contain rounded-md bg-indigo-100 p-1 mx-auto md:mx-0"
                   src={doctorImage || '/default-doctor.png'}
                   alt={item.docData?.name || 'Doctor'}
                   onError={(e) => {
@@ -160,10 +156,10 @@ const getUserAppointment = async () => {
                     )}
                   </div>
                   <p className="text-sm">
-                    <span className="font-medium text-gray-800">Date & Time:</span> {slotDataFormat(item.slotDate)}, {item.slotTime}
+                    <span className="font-medium text-gray-800">Date & Time:</span> {slotDataFormat(item.slotDate)} || {item.slotTime}
                   </p>
                   <p className="text-sm">
-                    <span className="font-medium text-gray-800">Amount:</span> ${item.amount}
+                    <span className="font-medium text-gray-800">Amount:</span> ₹{item.amount}
                   </p>
                 </div>
 
@@ -180,7 +176,7 @@ const getUserAppointment = async () => {
                   {!item.cancelled && !item.isCompleted && (
                     <button
                       onClick={() => cancelAppointment(item._id)}
-                      className="w-full h-10 rounded cursor-pointer bg-red-500 text-white hover:bg-red-600 transition text-sm"
+                      className="w-full h-10 rounded cursor-pointer bg-red-600 text-white hover:bg-red-700 transition text-sm font-semibold"
                     >
                       Cancel
                     </button>

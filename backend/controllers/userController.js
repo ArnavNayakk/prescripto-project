@@ -215,7 +215,7 @@ const bookAppointment = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.error("❌ Appointment Booking Error:", error);
+    console.error("Appointment Booking Error:", error);
     return res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
@@ -231,7 +231,7 @@ const getUserAppointments = async (req, res) => {
     const appointments = await appointmentModel
       .find({ userId })
       .sort({ date: -1 })
-      .populate("docId"); // ✅ populate doctor info
+      .populate("docId"); 
 
     const formattedAppointments = appointments.map((appointment) => ({
       ...appointment._doc,
@@ -243,7 +243,7 @@ const getUserAppointments = async (req, res) => {
       appointments: formattedAppointments,
     });
   } catch (error) {
-    console.error("❌ Error fetching appointments:", error);
+    console.error("Error fetching appointments:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch appointments",
@@ -327,7 +327,6 @@ const verifyRazorPay = async (req, res) => {
 
     const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
 
-    console.log("🧾 Order Info from Razorpay:", orderInfo);
 
     const appointmentId = orderInfo.receipt;
 
@@ -339,7 +338,7 @@ const verifyRazorPay = async (req, res) => {
     }
 
   } catch (error) {
-    console.error("❌ Razorpay verify error:", error);
+    console.error(" Razorpay verify error:", error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
